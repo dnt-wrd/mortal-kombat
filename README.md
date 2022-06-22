@@ -1,2 +1,1 @@
-# mortal-combat
- test
+# mortal-kombat
