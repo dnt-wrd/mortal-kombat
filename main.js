@@ -101,9 +101,7 @@ function createElement(tag, className) {
     return $tag;
 };
 
-function getRandom(maxDamage) {
-    return Math.ceil(Math.random() * maxDamage);
-}
+
 
 function createPlayer(hero) {
     const $player = createElement('div', 'player'+hero.player);
@@ -129,18 +127,24 @@ function createPlayer(hero) {
     return $player;
 };
 
+function randomKick(hp) {
+    return Math.ceil(Math.random() * hp);
+}
 
+function changeHp(player) {
+    const $playerLife = document.querySelector('.player'+player.playerNumber + ' .life');
 
-
-function playerWins(name) {
-    const $loseTitle = createElement('div', 'winTitle');
-
-    if (name) {
-        $loseTitle.innerText = name + ' wins';
+    const hpKick = randomKick(20);
+    console.log(`${hpKick}------- минус`)
+    if (player.hp-hpKick > 0) {
+        player.hp -= hpKick;
     } else {
-        $loseTitle.innerText = 'draw';
+        player.hp = 0;
     }
+    console.log(player.hp)
+    $playerLife.style.width = player.hp + '%';
     
+
     return $loseTitle;
 }
 
@@ -227,6 +231,7 @@ function playerAttack() {
 
 function showResult() {
     if (player1.hp === 0 || player2.hp === 0) {
+        console.log(player1.hp + ' ' + player2.hp)
         $randomButton.disabled = true;
         $arena.appendChild(createReloadButton());
     }
