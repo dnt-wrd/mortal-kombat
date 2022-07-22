@@ -286,4 +286,5 @@ $formFight.addEventListener('submit', function(e) {
     showResult()
 });
 
+
 startLogs();
