@@ -105,6 +105,19 @@ function getRandom(maxDamage) {
     return Math.ceil(Math.random() * maxDamage);
 }
 
+function playerWins(name) {
+    const $loseTitle = createElement('div', 'winTitle');
+
+    if (name) {
+        $loseTitle.innerText = name + ' wins';
+    } else {
+        $loseTitle.innerText = 'draw';
+    }
+
+
+    return $loseTitle;
+}
+
 function createPlayer(hero) {
     const $player = createElement('div', 'player'+hero.player);
     const $progressbar = createElement('div', 'progressbar');
