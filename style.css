@@ -402,3 +402,24 @@ input[type=radio]:checked + label > span::before {
 input[type=radio]:checked + label > span:hover {
     background: none;
 }
+
+.chat {
+    width: 786px;
+    height: 30vh;
+    background-image: url(./assets/versus.png);
+    background-size: cover;
+    background-position: center;
+    border-top: 4px solid #f5d100;
+    padding: 6px 40px;
+    overflow: scroll;
+    color: white;
+    font-family: Arial;
+}
+
+#test {
+    cursor: pointer;
+}
+
+#test:disabled {
+    cursor: not-allowed;
+}
