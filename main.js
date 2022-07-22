@@ -101,7 +101,9 @@ function createElement(tag, className) {
     return $tag;
 };
 
-
+function getRandom(maxDamage) {
+    return Math.ceil(Math.random() * maxDamage);
+}
 
 function createPlayer(hero) {
     const $player = createElement('div', 'player'+hero.player);
