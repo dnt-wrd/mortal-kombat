@@ -47,7 +47,6 @@ const HIT = {
     foot: 20,
 }
 const ATTACK = ['head', 'body', 'foot'];
-
 class Hero {
     constructor(player, name, hp, img, weapon) {
         this.player = player;
@@ -91,7 +90,7 @@ const player2 = new Hero(
     ['SURIKEN', 'kek']
 );
 
-function createElement(tag, className) {
+const createElement = (tag, className) => {
     const $tag = document.createElement(tag);
 
     if (className) {
@@ -99,26 +98,26 @@ function createElement(tag, className) {
     }
 
     return $tag;
-};
+}
 
-function getRandom(maxDamage) {
+const getRandom = (maxDamage) => {
     return Math.ceil(Math.random() * maxDamage);
 }
 
-function playerWins(name) {
+const playerWins = (name) => {
     const $loseTitle = createElement('div', 'winTitle');
 
     if (name) {
         $loseTitle.innerText = name + ' wins';
+        viewLogs('end');
     } else {
         $loseTitle.innerText = 'draw';
+        viewLogs('draw');
     }
-
-
     return $loseTitle;
 }
 
-function createPlayer(hero) {
+const createPlayer = (hero) => {
     const $player = createElement('div', 'player'+hero.player);
     const $progressbar = createElement('div', 'progressbar');
     const $character = createElement('div', 'character');
@@ -142,15 +141,11 @@ function createPlayer(hero) {
     return $player;
 };
 
-function randomKick(hp) {
-    return Math.ceil(Math.random() * hp);
-}
-
-function changeHp(player) {
+const changeHp = (player) => {
     const $playerLife = document.querySelector('.player'+player.playerNumber + ' .life');
 
-    const hpKick = randomKick(20);
-    console.log(`${hpKick}------- минус`)
+    const hpKick = getRandom(20);
+    //console.log(`${hpKick}------- минус`)
     if (player.hp-hpKick > 0) {
         player.hp -= hpKick;
     } else {
@@ -163,43 +158,7 @@ function changeHp(player) {
     return $loseTitle;
 }
 
-// function changeHP(player){
-//     const $playerLife = document.querySelector('.player' + player.playerNumber + ' .life');
-//     player.hp -= getRandom(20);
-
-//     $playerLife.style.width = player.hp + '%';
-
-//     if (player.hp <= 0) {
-//         player.hp = 0;
-//     }
-
-//     $playerLife.style.width = player.hp + '%';
-// }
-
-// $randomButton.addEventListener('click', function(){
-//     // changeHP(player1);
-//     // changeHP(player2);
-
-//     player1.changeHP(getRandom(20));
-//     player2.changeHP(getRandom(20));
-//     player1.renderHP();
-//     player2.renderHP();
-
-//     if (player1.hp === 0 || player2.hp === 0) {
-//         $randomButton.disabled = true;
-//         $arena.appendChild(createReloadButton());
-//     }
-
-//     if (player1.hp === 0 && player1.hp < player2.hp) {
-//         $arena.appendChild(playerWins(player2.name));
-//     } else if (player2.hp === 0 && player2.hp < player1.hp) {
-//         $arena.appendChild(playerWins(player1.name));
-//     } else if (player1.hp === 0 && player2.hp === 0) {
-//         $arena.appendChild(playerWins());
-//     }
-// })
-
-function createReloadButton() {
+const createReloadButton = () => {
     const $reloadWrap = createElement('div', 'reloadWrap');
     const $reloadButton = $reloadWrap.appendChild(createElement('button', 'button'));
     
@@ -211,7 +170,7 @@ function createReloadButton() {
     return $reloadWrap;
 };
 
-function enemyAttack() {
+const enemyAttack = () => {
     const hit = ATTACK[getRandom(3)-1];
     const defence = ATTACK[getRandom(3)-1];
 
@@ -226,7 +185,7 @@ $arena.appendChild(createPlayer(player1));
 $arena.appendChild(createPlayer(player2));
 
 
-function playerAttack() {
+const playerAttack = () => {
     const attack = {};
     for (let item of $formFight) {
         if (item.checked && item.name === 'hit') {
@@ -244,9 +203,9 @@ function playerAttack() {
     return attack;
 }
 
-function showResult() {
+const showResult = () => {
     if (player1.hp === 0 || player2.hp === 0) {
-        console.log(player1.hp + ' ' + player2.hp)
+        //console.log(player1.hp + ' ' + player2.hp)
         $randomButton.disabled = true;
         $arena.appendChild(createReloadButton());
     }
@@ -260,51 +219,105 @@ function showResult() {
     }
 }
 
-function getTime() {
+const getTime = () => {
     const date = new Date();
-    time = `${date.getHours()}:${date.getMinutes()}`;
+    time = `${date.getHours()}:${date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()}`;
     return time;
 };
 
-function startLogs() {
-    const startText = logs['start'].replace('[time]', getTime())
-    .replace('[player1]', player1.name)
-    .replace('[player2]', player2.name);
-    // return startText;
-    $chat.insertAdjacentHTML('afterbegin', `<p>${startText}</p>`)
-};
-
-function generateLogs(type, player1, player2) {
+const viewLogs = (typeLog, playerDefenceName, playerAttackName, damage, hp) => {
+    const startLog = () => {
+        const logText = logs['start'].replace('[time]', getTime())
+        .replace('[player1]', player1.name)
+        .replace('[player2]', player2.name);
+        // return startText;
+        $chat.insertAdjacentHTML('afterbegin', `<p>${logText}</p>`)
+    };
     
-    // const text = logs[type][0].replace('[playerKick]', player1.name).replace('[playerDefence]', player2.name);
-    // const el = `<p>${text}</p>`;
-    // $chat.insertAdjacentHTML('afterbegin', el);
+    const attackLog = (playerDefenceName, playerAttackName, damage, hp) => {
+        const logText = `${getTime()} `
+        .concat(logs['hit'][getRandom(logs['hit'].length-1)])
+        .replace('[playerDefence]', playerDefenceName)
+        .replace('[playerKick]', playerAttackName)
+        .concat(`. Нанесено урона ${damage}, осталось ${hp}/100`);
+        // return startText;
+        $chat.insertAdjacentHTML('afterbegin', `<p>${logText}</p>`)
+    };
+    
+    const defenceLog = (playerDefenceName, playerAttackName, damage, hp) => {
+        const logText = `${getTime()} `
+        .concat(logs['defence'][getRandom(logs['defence'].length-1)])
+        .replace('[playerDefence]', playerDefenceName)
+        .replace('[playerKick]', playerAttackName)
+        .concat(`. Заблокировано ${damage} урона, осталось ${hp}/100`);
+        $chat.insertAdjacentHTML('afterbegin', `<p>${logText}</p>`)
+    };
+    
+    const endGameSomeoneWin = () => {
+        const playerWins = player1.hp >= 1 ? player1.name : player2.name;
+        const playerLose = player2.hp <= 0 ? player2.name : player1.name;
+        const logText = `${getTime()} `
+        .concat(logs['end'][getRandom(logs['end'].length)-1])
+        .replace('[playerWins]', playerWins)
+        .replace('[playerLose]', playerLose)
+        $chat.insertAdjacentHTML('afterbegin', `<p>${logText}</p>`)
+    }
+    
+    const endGameDraw = () => {
+        const logText = `${getTime()} `
+        .concat(logs['draw']);
+        $chat.insertAdjacentHTML('afterbegin', `<p>${logText}</p>`);
+    }
 
-
-
+    switch (typeLog) {
+        case 'start':
+            startLog();
+            break;
+        case 'hit':
+            attackLog(playerDefenceName, playerAttackName, damage, hp);
+            break;
+        case 'defence':
+            defenceLog(playerDefenceName, playerAttackName, damage, hp);
+            break;
+        case 'end':
+            endGameSomeoneWin();
+            break;
+        case 'draw':
+            endGameDraw();
+            break;    
+        default:
+            $chat.insertAdjacentHTML('afterbegin', `<p>Что-то у нас пошло не по плану и поломалось. Обратитесь к разработчику</p>`);
+            break;
+    };
 }
+
 $formFight.addEventListener('submit', function(e) {
     e.preventDefault();
     const enemy = enemyAttack();
     
     const attack = playerAttack();
 
+    if (attack.defence === enemy.hit) {
+        viewLogs('defence', player1.name, player2.name, enemy.value, player1.hp);
+    }
+
+    if (enemy.defence === attack.hit) {
+        viewLogs('defence', player2.name, player1.name, enemy.value, player2.hp);
+    }
+
     if (attack.defence !== enemy.hit) {
         player1.changeHP(enemy.value);
         player1.renderHP();
-        //generateLogs('hit', player2, player1)
+        viewLogs('hit', player1.name, player2.name, enemy.value, player1.hp);
 
     }
 
     if (enemy.defence !== attack.hit) {
         player2.changeHP(attack.value);
         player2.renderHP();
-        //generateLogs('hit', player1, player2)
-
+        viewLogs('hit', player2.name, player1.name, attack.value, player2.hp);
     }
-
     showResult()
 });
 
-
-startLogs();
+viewLogs('start');
